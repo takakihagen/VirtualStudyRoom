@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "663727274018",
+    "firebase_url": "https://virtualstudyroom-3894a.firebaseio.com",
+    "project_id": "virtualstudyroom-3894a",
+    "storage_bucket": "virtualstudyroom-3894a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663727274018:android:5a4cab044ddd218964327b",
+        "android_client_info": {
+          "package_name": "com.example.virtualstudyroom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663727274018-g7ggkni6hhvheo1a520fvlap4fia5t3d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0C4Gq0yjzd0rupUJlIMeDSbTjUsUh50k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663727274018-g7ggkni6hhvheo1a520fvlap4fia5t3d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
