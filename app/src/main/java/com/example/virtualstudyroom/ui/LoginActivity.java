@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.virtualstudyroom.MainActivity;
 import com.example.virtualstudyroom.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
         if (currentUser != null) {
             Log.v("+++", "Already signed in");
+            moveToMainActivity();
         } else {
             Log.v("+++", "Not signed in");
         }
@@ -97,6 +99,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    private void moveToMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("+++", "firebaseAuthWithGoogle:" + acct.getId());
@@ -110,6 +117,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("+++", "signInWithCredential:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            moveToMainActivity();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("+++", "signInWithCredential:failure", task.getException());
