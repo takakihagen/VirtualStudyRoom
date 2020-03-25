@@ -15,6 +15,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -180,7 +181,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("+++", "signInWithCredential:failure", task.getException());
-
+                            LoginManager.getInstance().logOut();
                         }
                     }
                 });
