@@ -37,4 +37,5 @@ dependencies {
     //implementation 'com.twitter.sdk.android:twitter-core:3.3'
     implementation 'com.google.firebase:firebase-auth:19.3.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
