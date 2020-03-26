@@ -3,18 +3,5 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/google_signin_button"
-        android:layout_width="300dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="15dp"
-        />
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/facebook_login_button"
-        android:layout_width="300dp"
-        android:layout_height="55dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp" />
+    
 </LinearLayout>
