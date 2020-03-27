@@ -25,7 +25,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(currentUser!=null) Log.v("+++", currentUser.getDisplayName());
+        if(currentUser!=null){
+            Log.v("+++", currentUser.getDisplayName());
+            Log.v("+++", currentUser.getPhotoUrl().toString());
+        }
     }
 
     public void LogOut(View view){
