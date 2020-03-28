@@ -8,9 +8,16 @@
     android:orientation="vertical"
     android:gravity="bottom">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/tv_profile_img"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center"/>
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/tv_disp_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="Header"
         android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>

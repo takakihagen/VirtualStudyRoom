@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.virtualstudyroom.R;
 import com.example.virtualstudyroom.ui.LoginActivity;
@@ -27,13 +29,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolBar;
     private NavigationView mNavigationView;
+    private ImageView mProfileImageView;
+    private TextView mDispNameTextView;
 
+    private FirebaseUser mCurrentUser;
     private ActionBarDrawerToggle mDrawerToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (mNavigationView.getHeaderCount() > 0) {
+            // avoid NPE by first checking if there is at least one Header View available
+            View headerLayout = mNavigationView.getHeaderView(0);
+            mProfileImageView = headerLayout.findViewById(R.id.tv_profile_img);
+            mDispNameTextView = headerLayout.findViewById(R.id.tv_disp_name);
+        }
+
 
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -51,12 +64,14 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolBar, R.string.drawer_open,  R.string.drawer_close);
 
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(currentUser!=null){
-            Log.v("+++", currentUser.getDisplayName());
-            Log.v("+++", currentUser.getPhotoUrl().toString());
-        }
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        initFragment();
+        initNavigationHeader();
+        setupDrawerContent(mNavigationView);
+    }
+
+    private void initFragment(){
         Fragment fragment = null;
         try {
             fragment = new StudyRoomFragment();
@@ -65,8 +80,17 @@ public class MainActivity extends AppCompatActivity {
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment).commit();
+    }
 
-        setupDrawerContent(mNavigationView);
+    private void initNavigationHeader(){
+        if(mCurrentUser!=null) {
+            if(mCurrentUser.getPhotoUrl()!=null) Picasso.get()
+                                                    .load(mCurrentUser.getPhotoUrl())
+                                                    .into(mProfileImageView);
+            if(mCurrentUser.getDisplayName()!=null) mDispNameTextView.setText(mCurrentUser.getDisplayName());
+            else mDispNameTextView.setText(getString(R.string.anonymous));
+        }
+
     }
 
     private void LogOut(){
