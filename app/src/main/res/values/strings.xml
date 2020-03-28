@@ -1,9 +1,22 @@
 <resources>
     <string name="app_name">VirtualStudyRoom</string>
 
+    <!--Navigation Bar-->
+    <string name="nav_study_room">Study Room</string>
+    <string name="nav_study_history">History</string>
+    <string name="nav_sign_out">Sign Out</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <!-- For Firebase Authentication-->
     <string name="facebook_application_id" translatable="false">348902852710403</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb348902852710403</string>
 
     <string name="twitter_consumer_key" translatable="false">57I2l39dc8XdPelLE6YAlhHJY</string>
     <string name="twitter_consumer_secret" translatable="false">@string/MY_TWITTER_API_SECRET</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment1">StudyHistory</string>
+    <string name="hello_blank_fragment">StudyRoom</string>
 </resources>
