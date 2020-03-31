@@ -17,6 +17,9 @@
     <string name="twitter_consumer_key" translatable="false">57I2l39dc8XdPelLE6YAlhHJY</string>
     <string name="twitter_consumer_secret" translatable="false">@string/MY_TWITTER_API_SECRET</string>
 
+    <!-- For study room-->
+    <string name="start_button">START</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">StudyHistory</string>
     <string name="hello_blank_fragment">StudyRoom</string>
