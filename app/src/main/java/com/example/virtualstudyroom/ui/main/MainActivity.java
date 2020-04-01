@@ -27,12 +27,21 @@ import com.example.virtualstudyroom.R;
 import com.example.virtualstudyroom.ui.LoginActivity;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseUser mCurrentUser;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    FirebaseFirestore mFireDb;
+    private String mDocumentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         setupDrawerContent(mNavigationView);
 
         //Firebase firestore
-        FirebaseFirestore mFireDb = FirebaseFirestore.getInstance();
+        mFireDb = FirebaseFirestore.getInstance();
     }
 
     private void initFragment(){
@@ -180,28 +192,84 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onStartButtonClick(View view) {
-        LinearLayout startLinearLayout = (LinearLayout) findViewById(R.id.start_button_room);
-        LinearLayout stopPauseLinerLayout = (LinearLayout) findViewById(R.id.pause_stop_button_room);
-        startLinearLayout.setVisibility(View.GONE);
-        stopPauseLinerLayout.setVisibility(View.VISIBLE);
 
-        Toast toast = Toast.makeText(this, "Start button clicked", Toast.LENGTH_LONG);
-        toast.show();
+        Timestamp time = Timestamp.now();
+        Map<String, Object> user = new HashMap<>();
+        user.put("user_id", mCurrentUser.getUid());
+        user.put("status", "study");
+        user.put("start_time", time);
+
+        mFireDb.collection(getString(R.string.study_user_collection))
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("OOOO", "DocumentSnapshot added with ID: " + documentReference.getId());
+                        setmDocumentId(documentReference.getId());
+                        displayButtonRoom(getResources().getBoolean(R.bool.showStopPauseRoom));
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("OOOO", "Error adding document", e);
+                    }
+                });
     }
 
     public void onStopButtonClick(View view){
-        LinearLayout startLinearLayout = (LinearLayout) findViewById(R.id.start_button_room);
-        LinearLayout stopPauseLinerLayout = (LinearLayout) findViewById(R.id.pause_stop_button_room);
-        startLinearLayout.setVisibility(View.VISIBLE);
-        stopPauseLinerLayout.setVisibility(View.GONE);
+        DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
+        docRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                        displayButtonRoom(getResources().getBoolean(R.bool.showStartRoom));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("LLLL", "Error updating document", e);
+                    }
+                });
 
         Toast toast = Toast.makeText(this, "Stop button clicked", Toast.LENGTH_LONG);
         toast.show();
     }
 
     public void onPauseButtonClick(View view){
+        DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
+        docRef.update("status", "pause")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("LLLL", "Error updating document", e);
+                    }
+                });
+    }
 
-        Toast toast = Toast.makeText(this, "Pause button clicked", Toast.LENGTH_LONG);
-        toast.show();
+    private void displayButtonRoom(boolean setButtonRoom){
+        //setButtonRoom: true=> show start button, false=>show stop buttons
+        LinearLayout startLinearLayout = (LinearLayout) findViewById(R.id.start_button_room);
+        LinearLayout stopPauseLinerLayout = (LinearLayout) findViewById(R.id.pause_stop_button_room);
+        if(setButtonRoom) {
+            startLinearLayout.setVisibility(View.VISIBLE);
+            stopPauseLinerLayout.setVisibility(View.GONE);
+        }else{
+            startLinearLayout.setVisibility(View.GONE);
+            stopPauseLinerLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setmDocumentId(String dId){
+        mDocumentId = dId;
     }
 }

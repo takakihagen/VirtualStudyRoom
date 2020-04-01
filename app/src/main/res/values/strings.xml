@@ -22,7 +22,13 @@
     <string name="twitter_consumer_key" translatable="false">57I2l39dc8XdPelLE6YAlhHJY</string>
     <string name="twitter_consumer_secret" translatable="false">@string/MY_TWITTER_API_SECRET</string>
 
+    <!--Firestorage-->
+    <string name="study_user_collection">StudyUsers</string>
+    <string name="user_id">user_id</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">StudyHistory</string>
     <string name="hello_blank_fragment">StudyRoom</string>
+
+
 </resources>
