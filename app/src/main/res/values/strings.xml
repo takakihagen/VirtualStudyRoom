@@ -10,6 +10,11 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <!--Stury Room -->
+    <string name="start_button">START</string>
+    <string name="stop_button">STOP</string>
+    <string name="pause_button">PAUSE</string>
+
     <!-- For Firebase Authentication-->
     <string name="facebook_application_id" translatable="false">348902852710403</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb348902852710403</string>

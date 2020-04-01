@@ -19,7 +19,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.virtualstudyroom.R;
 import com.example.virtualstudyroom.ui.LoginActivity;
@@ -29,6 +31,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseUser mCurrentUser;
     private ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
         initFragment();
         initNavigationHeader();
         setupDrawerContent(mNavigationView);
+
+        //Firebase firestore
+        FirebaseFirestore mFireDb = FirebaseFirestore.getInstance();
     }
 
     private void initFragment(){
@@ -123,32 +130,27 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         Fragment fragment = null;
         Class fragmentClass=null;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        boolean changeFrame = false;
         // Create a new fragment and specify the fragment to show based on nav item clicked
         switch(menuItem.getItemId()) {
             case R.id.nav_study_room:
-                fragmentClass = StudyRoomFragment.class;
+                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new StudyRoomFragment()).commit();
+                changeFrame = true;
                 break;
             case R.id.nav_study_history:
-                fragmentClass = StudyHistoryFragment.class;
+                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new StudyHistoryFragment()).commit();
+                changeFrame = true;
                 break;
             case R.id.nav_sign_out:
                 LogOut();
                 break;
             default:
-                fragmentClass = StudyRoomFragment.class;
+                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new StudyRoomFragment()).commit();
+                changeFrame = true;
         }
 
-        if(fragmentClass != null) {
-            try {
-                fragment = (Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // Insert the fragment by replacing any existing fragment
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment).commit();
-
+        if(changeFrame) {
             // Highlight the selected item has been done by NavigationView
             menuItem.setChecked(true);
             // Set action bar title
@@ -175,5 +177,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+    }
+
+    public void onStartButtonClick(View view) {
+        LinearLayout startLinearLayout = (LinearLayout) findViewById(R.id.start_button_room);
+        LinearLayout stopPauseLinerLayout = (LinearLayout) findViewById(R.id.pause_stop_button_room);
+        startLinearLayout.setVisibility(View.GONE);
+        stopPauseLinerLayout.setVisibility(View.VISIBLE);
+
+        Toast toast = Toast.makeText(this, "Start button clicked", Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    public void onStopButtonClick(View view){
+        LinearLayout startLinearLayout = (LinearLayout) findViewById(R.id.start_button_room);
+        LinearLayout stopPauseLinerLayout = (LinearLayout) findViewById(R.id.pause_stop_button_room);
+        startLinearLayout.setVisibility(View.VISIBLE);
+        stopPauseLinerLayout.setVisibility(View.GONE);
+
+        Toast toast = Toast.makeText(this, "Stop button clicked", Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    public void onPauseButtonClick(View view){
+
+        Toast toast = Toast.makeText(this, "Pause button clicked", Toast.LENGTH_LONG);
+        toast.show();
     }
 }

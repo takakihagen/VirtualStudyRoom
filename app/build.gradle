@@ -51,6 +51,9 @@ dependencies {
     implementation 'com.twitter.sdk.android:twitter:3.1.1'
     implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
 
+    //Firebase
+    implementation 'com.google.firebase:firebase-firestore:21.4.2'
+
     //Third party
     implementation "com.squareup.picasso:picasso:2.71828"
     implementation 'de.hdodenhof:circleimageview:3.1.0'
