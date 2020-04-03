@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="study_state_val">1</integer>
+    <integer name="pause_state_val">2</integer>
+    <integer name="stop_state_val">3</integer>
+</resources>

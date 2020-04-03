@@ -14,6 +14,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.virtualstudyroom.R;
+import com.example.virtualstudyroom.database.StudyHistory;
+import com.example.virtualstudyroom.database.StudyHistoryDatabase;
 import com.example.virtualstudyroom.ui.LoginActivity;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,11 +38,13 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseFirestore mFireDb;
     private String mDocumentId;
+
+    private StudyHistoryDatabase mStuyHisDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Firebase firestore
         mFireDb = FirebaseFirestore.getInstance();
+
+        //Local room database
+        mStuyHisDb = StudyHistoryDatabase.getInstance(getApplicationContext());
     }
 
     private void initFragment(){
@@ -195,9 +205,10 @@ public class MainActivity extends AppCompatActivity {
 
         Timestamp time = Timestamp.now();
         Map<String, Object> user = new HashMap<>();
-        user.put("user_id", mCurrentUser.getUid());
-        user.put("status", "study");
-        user.put("start_time", time);
+        user.put(getString(R.string.fs_user_id), mCurrentUser.getUid());
+        user.put(getString(R.string.fs_status), getString(R.string.state_study));
+        user.put(getString(R.string.fs_pause_total_time), 0);
+        user.put(getString(R.string.fs_start_time), time);
 
         mFireDb.collection(getString(R.string.study_user_collection))
                 .add(user)
@@ -206,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("OOOO", "DocumentSnapshot added with ID: " + documentReference.getId());
                         setmDocumentId(documentReference.getId());
-                        displayButtonRoom(getResources().getBoolean(R.bool.showStopPauseRoom));
+                        displayButtonRoom(getResources().getInteger(R.integer.study_state_val));
 
                     }
                 })
@@ -219,33 +230,68 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onStopButtonClick(View view){
-        DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
-        docRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
-                        displayButtonRoom(getResources().getBoolean(R.bool.showStartRoom));
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("LLLL", "Error updating document", e);
-                    }
-                });
+        final DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
 
-        Toast toast = Toast.makeText(this, "Stop button clicked", Toast.LENGTH_LONG);
-        toast.show();
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if(documentSnapshot.exists()) {
+                        Timestamp studyStart = (Timestamp) documentSnapshot.getData().get(getString(R.string.fs_start_time));
+                        long totalPauseTime = (long) documentSnapshot.getData().get(getString(R.string.fs_pause_total_time));
+                        long totalStudyTime = Math.abs(studyStart.getSeconds()-Timestamp.now().getSeconds())-totalPauseTime;
+                        String status = (String) documentSnapshot.getData().get(getString(R.string.fs_status));
+                        if(getString(R.string.state_pause).equals(status)){
+                            Timestamp pauseStart = (Timestamp) documentSnapshot.getData().get(getString(R.string.fs_pause_start_time));
+                            totalStudyTime -= Math.abs(pauseStart.getSeconds()-Timestamp.now().getSeconds());
+                        }
+
+                        docRef.delete()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                        displayButtonRoom(getResources().getInteger(R.integer.stop_state_val));
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("LLLL", "Error updating document", e);
+                                    }
+                                });
+
+                        final StudyHistory history = new StudyHistory((Long) totalPauseTime, studyStart.toDate());
+                        new AsyncTask<Void, Void, Void>(){
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                mStuyHisDb.studyHistoryDao().insertHistory(history);
+                                return null;
+                            }
+                        }.execute();
+                    }
+                    else
+                        Log.d("JJJJJJ", "get failed with ", task.getException());
+                } else {
+                    Log.d("JJJJJJ", "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     public void onPauseButtonClick(View view){
+        Timestamp time = Timestamp.now();
+        Map<String, Object> user = new HashMap<>();
+        user.put(getString(R.string.fs_status), getString(R.string.state_pause));
+        user.put(getString(R.string.fs_pause_start_time), time);
         DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
-        docRef.update("status", "pause")
+        docRef.update(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                        displayButtonRoom(getResources().getInteger(R.integer.pause_state_val));
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -256,16 +302,66 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void displayButtonRoom(boolean setButtonRoom){
+    public void onPauseStartButtonClick(View view) {
+        final DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if(documentSnapshot.exists()) {
+                        Timestamp pauseStart = (Timestamp) documentSnapshot.getData().get(getString(R.string.fs_pause_start_time));
+                        long PauseTime = Math.abs(pauseStart.getSeconds() - Timestamp.now().getSeconds());
+
+                        long pauseTotalTime = (long) documentSnapshot.getData().get(getString(R.string.fs_pause_total_time));
+                        pauseTotalTime += PauseTime;
+
+                        Map<String, Object> user = new HashMap<>();
+                        user.put(getString(R.string.fs_status), getString(R.string.state_study));
+                        user.put(getString(R.string.fs_pause_total_time), pauseTotalTime);
+
+                        docRef.update(user)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                        displayButtonRoom(getResources().getInteger(R.integer.study_state_val));
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("LLLL", "Error updating document", e);
+                                    }
+                                });
+                    }
+                    else
+                        Log.d("JJJJJJ", "get failed with ", task.getException());
+                } else {
+                    Log.d("JJJJJJ", "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    private void displayButtonRoom(int buttonRoomState){
         //setButtonRoom: true=> show start button, false=>show stop buttons
-        LinearLayout startLinearLayout = (LinearLayout) findViewById(R.id.start_button_room);
-        LinearLayout stopPauseLinerLayout = (LinearLayout) findViewById(R.id.pause_stop_button_room);
-        if(setButtonRoom) {
-            startLinearLayout.setVisibility(View.VISIBLE);
-            stopPauseLinerLayout.setVisibility(View.GONE);
-        }else{
-            startLinearLayout.setVisibility(View.GONE);
-            stopPauseLinerLayout.setVisibility(View.VISIBLE);
+        LinearLayout studyStateLinearLayout = (LinearLayout) findViewById(R.id.study_state_room);
+        LinearLayout pauseStateLinerLayout = (LinearLayout) findViewById(R.id.pause_state_room);
+        LinearLayout stopStateLinerLayout = (LinearLayout) findViewById(R.id.stop_state_room);
+
+        if(getResources().getInteger(R.integer.study_state_val)==buttonRoomState) {
+            studyStateLinearLayout.setVisibility(View.VISIBLE);
+            pauseStateLinerLayout.setVisibility(View.GONE);
+            stopStateLinerLayout.setVisibility(View.GONE);
+        }else if(getResources().getInteger(R.integer.pause_state_val)==buttonRoomState){
+            studyStateLinearLayout.setVisibility(View.GONE);
+            pauseStateLinerLayout.setVisibility(View.VISIBLE);
+            stopStateLinerLayout.setVisibility(View.GONE);
+        }else if(getResources().getInteger(R.integer.stop_state_val)==buttonRoomState){
+            studyStateLinearLayout.setVisibility(View.GONE);
+            pauseStateLinerLayout.setVisibility(View.GONE);
+            stopStateLinerLayout.setVisibility(View.VISIBLE);
         }
     }
 
