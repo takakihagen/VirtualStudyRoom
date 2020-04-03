@@ -40,16 +40,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolBar;
     private NavigationView mNavigationView;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
 
     FirebaseFirestore mFireDb;
+    String mState;
     private String mDocumentId;
 
     private StudyHistoryDatabase mStuyHisDb;
@@ -86,10 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolBar, R.string.drawer_open,  R.string.drawer_close);
 
-
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        initFragment();
         initNavigationHeader();
         setupDrawerContent(mNavigationView);
 
@@ -98,6 +98,53 @@ public class MainActivity extends AppCompatActivity {
 
         //Local room database
         mStuyHisDb = StudyHistoryDatabase.getInstance(getApplicationContext());
+
+        if(savedInstanceState==null) {
+            initFragment();
+        }
+    }
+
+    public void setButtons(){
+        displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
+        mFireDb.collection(getString(R.string.study_user_collection))
+                .whereEqualTo(getString(R.string.user_id), mCurrentUser.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        Log.d("++______",getString(R.string.fs_start_time));
+                        QueryDocumentSnapshot validDoc = null;
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("KKKKKKK", document.getId() + " => " + document.getData());
+                                if(validDoc==null) validDoc = document;
+
+                                Timestamp validDocTime = (Timestamp) validDoc.getData().get(getString(R.string.fs_start_time));
+                                Timestamp docTime = (Timestamp) document.getData().get(getString(R.string.fs_start_time));
+                                if(docTime.compareTo(validDocTime)>0){
+                                    validDoc = document;
+                                }
+                            }
+
+                            if(validDoc!=null) {
+                                mState = (String) validDoc.getData().get(getResources().getString(R.string.fs_status));
+                                setmDocumentId((String) validDoc.getId());
+                                if (mState.equals(getString(R.string.state_study))) {
+                                    displayButtonRoom(getResources().getInteger(R.integer.study_state_val));
+                                } else if (mState.equals(getString(R.string.state_pause))) {
+                                    displayButtonRoom(getResources().getInteger(R.integer.pause_state_val));
+                                } else if (mState.equals(getString(R.string.state_stop))) {
+                                    displayButtonRoom(getResources().getInteger(R.integer.stop_state_val));
+                                }
+                            }else{
+                                displayButtonRoom(getResources().getInteger(R.integer.stop_state_val));
+                            }
+                        } else {
+                            Log.d("JIJIJIJ","lll");
+                            displayButtonRoom(getResources().getInteger(R.integer.stop_state_val));
+                        }
+                    }
+                });
     }
 
     private void initFragment(){
@@ -201,7 +248,13 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     public void onStartButtonClick(View view) {
+        displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
 
         Timestamp time = Timestamp.now();
         Map<String, Object> user = new HashMap<>();
@@ -230,6 +283,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onStopButtonClick(View view){
+        displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
+
         final DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
 
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -281,6 +336,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onPauseButtonClick(View view){
+        displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
+
         Timestamp time = Timestamp.now();
         Map<String, Object> user = new HashMap<>();
         user.put(getString(R.string.fs_status), getString(R.string.state_pause));
@@ -303,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onPauseStartButtonClick(View view) {
+        displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
         final DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -349,19 +407,28 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout studyStateLinearLayout = (LinearLayout) findViewById(R.id.study_state_room);
         LinearLayout pauseStateLinerLayout = (LinearLayout) findViewById(R.id.pause_state_room);
         LinearLayout stopStateLinerLayout = (LinearLayout) findViewById(R.id.stop_state_room);
+        LinearLayout loadStateLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_room);
 
         if(getResources().getInteger(R.integer.study_state_val)==buttonRoomState) {
             studyStateLinearLayout.setVisibility(View.VISIBLE);
             pauseStateLinerLayout.setVisibility(View.GONE);
             stopStateLinerLayout.setVisibility(View.GONE);
+            loadStateLinearLayout.setVisibility(View.GONE);
         }else if(getResources().getInteger(R.integer.pause_state_val)==buttonRoomState){
             studyStateLinearLayout.setVisibility(View.GONE);
             pauseStateLinerLayout.setVisibility(View.VISIBLE);
             stopStateLinerLayout.setVisibility(View.GONE);
+            loadStateLinearLayout.setVisibility(View.GONE);
         }else if(getResources().getInteger(R.integer.stop_state_val)==buttonRoomState){
             studyStateLinearLayout.setVisibility(View.GONE);
             pauseStateLinerLayout.setVisibility(View.GONE);
             stopStateLinerLayout.setVisibility(View.VISIBLE);
+            loadStateLinearLayout.setVisibility(View.GONE);
+        }else if(getResources().getInteger(R.integer.load_state_val)==buttonRoomState){
+            studyStateLinearLayout.setVisibility(View.GONE);
+            pauseStateLinerLayout.setVisibility(View.GONE);
+            stopStateLinerLayout.setVisibility(View.GONE);
+            loadStateLinearLayout.setVisibility(View.VISIBLE);
         }
     }
 

@@ -22,4 +22,10 @@ public class StudyRoomFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_study_room, container, false);
         return view;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((MainActivity) getActivity()).setButtons();
+    }
 }

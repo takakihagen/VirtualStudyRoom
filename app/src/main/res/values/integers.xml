@@ -3,4 +3,5 @@
     <integer name="study_state_val">1</integer>
     <integer name="pause_state_val">2</integer>
     <integer name="stop_state_val">3</integer>
+    <integer name="load_state_val">4</integer>
 </resources>
