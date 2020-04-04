@@ -15,6 +15,7 @@ import com.example.virtualstudyroom.R;
 import com.example.virtualstudyroom.model.CurrentUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -45,6 +46,9 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
         if(mCurrentUsers!=null){
             CurrentUser currentUser = mCurrentUsers.get(position);
             holder.mUserName.setText(currentUser.getUserName());
+            Picasso.get()
+                    .load(currentUser.getIconURI())
+                    .into(holder.mIcon);
         }
     }
 

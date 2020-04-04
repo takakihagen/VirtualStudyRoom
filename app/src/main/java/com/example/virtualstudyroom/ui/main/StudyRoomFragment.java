@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,8 @@ import com.example.virtualstudyroom.model.CurrentUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -48,10 +51,11 @@ public class StudyRoomFragment extends Fragment {
     public void onStart() {
         super.onStart();
         ((MainActivity) getActivity()).setButtons();
-        getData();
+        updateUI();
+        setOnDBchangeListener();
     }
 
-    private void getData(){
+    private void updateUI(){
         ((MainActivity) getActivity()).mFireDb.collection(getString(R.string.study_user_collection))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -65,6 +69,18 @@ public class StudyRoomFragment extends Fragment {
                         }
                         mAdapter.setCurrentUsers(mCurrentUsers);
                         mAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+    private void setOnDBchangeListener(){
+        ((MainActivity) getActivity()).mFireDb.collection(getString(R.string.study_user_collection))
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        Log.d("COOOOO","change!!");
+                        mCurrentUsers.clear();
+                        updateUI();
                     }
                 });
     }
