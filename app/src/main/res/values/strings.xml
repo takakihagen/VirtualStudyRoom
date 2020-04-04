@@ -17,6 +17,8 @@
 
     <!--Firestore field name-->
     <string name="fs_user_id">user_id</string>
+    <string name="fs_user_display_name">user_name</string>
+    <string name="fs_user_icon_url">user_icon_url</string>
     <string name="fs_start_time">start_time</string>
     <string name="fs_pause_start_time">pause_start_time</string>
     <string name="fs_status">status</string>
