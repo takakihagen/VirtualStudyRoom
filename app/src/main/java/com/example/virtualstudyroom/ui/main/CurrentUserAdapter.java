@@ -5,8 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +24,11 @@ import java.util.List;
 public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.CurrentUserViewHolder> {
 
     private List<CurrentUser> mCurrentUsers;
+    private Context mContext;
+
+    public CurrentUserAdapter(Context context){
+        mContext = context;
+    }
 
     public void setCurrentUsers(List<CurrentUser> cu){
         mCurrentUsers = cu;
@@ -49,6 +56,9 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
             Picasso.get()
                     .load(currentUser.getIconURI())
                     .into(holder.mIcon);
+            holder.mSatus.setText(currentUser.getStatus());
+            holder.mTime.setText(displayTime(currentUser));
+            displayYellButton(currentUser, holder);
         }
     }
 
@@ -57,13 +67,48 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
         return mCurrentUsers==null?0:mCurrentUsers.size();
     }
 
+    private String displayTime(CurrentUser cu){
+        if(cu.getStatus().equals(mContext.getString(R.string.state_study))){
+            return String.valueOf(cu.getTotalStudyTime());
+        }else if(cu.getStatus().equals(mContext.getString(R.string.state_pause))){
+            return String.valueOf(cu.getTotalPauseTime());
+        }
+        return null;
+    }
+
+    private void displayYellButton(CurrentUser cu, CurrentUserViewHolder holder){
+        if(cu.getStatus().equals(mContext.getString(R.string.state_study))){
+            holder.mYellButton.setVisibility(View.INVISIBLE);
+        }else if(cu.getStatus().equals(mContext.getString(R.string.state_pause))){
+            if(cu.getTotalPauseTime()>((long) mContext.getResources().getInteger(R.integer.yell_button_pause_time))) {
+                holder.mYellButton.setOnClickListener(new View.OnClickListener() {
+                                                          @Override
+                                                          public void onClick(View v) {
+                                                              Toast t = Toast.makeText(mContext, "clicked button", Toast.LENGTH_LONG);
+                                                              t.show();
+                                                          }
+                                                      }
+                );
+                holder.mYellButton.setVisibility(View.VISIBLE);
+            }else {
+                holder.mYellButton.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
     public class CurrentUserViewHolder extends RecyclerView.ViewHolder{
         ImageView mIcon;
         TextView mUserName;
+        TextView mSatus;
+        TextView mTime;
+        Button mYellButton;
         public CurrentUserViewHolder(@NonNull View itemView) {
             super(itemView);
             mIcon = itemView.findViewById(R.id.current_user_icon);
             mUserName = itemView.findViewById(R.id.current_user_name);
+            mSatus = itemView.findViewById(R.id.tv_status);
+            mTime = itemView.findViewById(R.id.tv_time);
+            mYellButton = itemView.findViewById(R.id.yell_button);
         }
     }
 }

@@ -41,7 +41,7 @@ public class StudyRoomFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_study_room, container, false);
         mCurrentUserList = (RecyclerView) view.findViewById(R.id.list_of_current_users);
-        mAdapter = new CurrentUserAdapter();
+        mAdapter = new CurrentUserAdapter(getContext());
         mCurrentUserList.setLayoutManager(new LinearLayoutManager(getContext()));
         mCurrentUserList.setAdapter(mAdapter);
         return view;
@@ -61,10 +61,21 @@ public class StudyRoomFragment extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        mCurrentUsers = new ArrayList<CurrentUser>();
                         for (QueryDocumentSnapshot doc: task.getResult()){
-                            CurrentUser cu = new CurrentUser((String) doc.getData().get(getString(R.string.fs_user_display_name)),
-                                    Uri.parse((String) doc.getData().get(getString(R.string.fs_user_icon_url))),
-                                    (Timestamp) doc.getData().get(getString(R.string.fs_start_time)));
+                            String userName = (String) doc.getData().get(getString(R.string.fs_user_display_name));
+                            Uri iconURI = Uri.parse((String) doc.getData().get(getString(R.string.fs_user_icon_url)));
+                            Timestamp startAt = (Timestamp) doc.getData().get(getString(R.string.fs_start_time));
+                            String status = (String) doc.getData().get(getString(R.string.fs_status));
+                            long pauseTieme = (long) doc.getData().get(getString(R.string.fs_pause_total_time));
+
+                            CurrentUser cu = null;
+                            if(status.equals(getString(R.string.state_study))){
+                                cu = new CurrentUser(userName, iconURI, startAt, status, pauseTieme);
+                            }else if(status.equals(getString(R.string.state_pause))){
+                                Timestamp pauseStartTieme = (Timestamp) doc.getData().get(getString(R.string.fs_pause_start_time));
+                                cu = new CurrentUser(userName, iconURI, startAt, status, pauseTieme, pauseStartTieme);
+                            }
                             mCurrentUsers.add(cu);
                         }
                         mAdapter.setCurrentUsers(mCurrentUsers);
@@ -79,7 +90,6 @@ public class StudyRoomFragment extends Fragment {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         Log.d("COOOOO","change!!");
-                        mCurrentUsers.clear();
                         updateUI();
                     }
                 });

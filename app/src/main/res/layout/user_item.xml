@@ -38,4 +38,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:color/darker_gray" />
 
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/current_user_icon"
+        app:layout_constraintStart_toStartOf="@+id/current_user_name" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_status"
+        app:layout_constraintStart_toEndOf="@+id/tv_status" />
+
+    <TextView
+        android:id="@+id/min_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/min_text"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_time"
+        app:layout_constraintStart_toEndOf="@+id/tv_time" />
+
+    <Button
+        android:id="@+id/yell_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Button"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/current_user_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/current_user_icon" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
