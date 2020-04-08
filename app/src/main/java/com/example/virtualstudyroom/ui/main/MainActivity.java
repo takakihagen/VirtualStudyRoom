@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
 
-                        final StudyHistory history = new StudyHistory((Long) totalPauseTime, studyStart.toDate());
+                        final StudyHistory history = new StudyHistory((Long) totalStudyTime, studyStart.toDate());
                         new AsyncTask<Void, Void, Void>(){
                             @Override
                             protected Void doInBackground(Void... voids) {

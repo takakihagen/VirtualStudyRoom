@@ -15,7 +15,7 @@ public interface StudyHistoryDao {
     void insertHistory(StudyHistory history);
 
     @Query("SELECT * FROM StudyHistory ORDER BY start_time")
-    LiveData<List<StudyHistory>> fetchAllTasks();
+    LiveData<List<StudyHistory>> fetchAllHistory();
 
     @Update
     void updateHistory(StudyHistory note);
