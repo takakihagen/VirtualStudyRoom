@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,6 +44,8 @@ public class StudyRoomFragment extends Fragment {
     private CurrentUserAdapter mAdapter;
     private RecyclerView mCurrentUserList;
 
+    private FragmentActivity mActivity;
+
     public StudyRoomFragment(){}
 
     @Override
@@ -61,33 +64,33 @@ public class StudyRoomFragment extends Fragment {
     public void onStart() {
         super.onStart();
         ((MainActivity) getActivity()).setButtons();
-        updateUI();
+        mActivity = getActivity();
+        updateUI(mActivity);
         setOnDBchangeListener();
     }
 
-    private void updateUI(){
-        ((MainActivity) getActivity()).mFireDb.collection(getString(R.string.study_user_collection))
-                .get()
+    private void updateUI(final FragmentActivity activity){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("StudyUsers").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         mCurrentUsers = new ArrayList<CurrentUser>();
-                        Log.d("+++++++++++++==","0");
                         for (QueryDocumentSnapshot doc: task.getResult()){
                             String docId = doc.getId();
-                            String userName = (String) doc.getData().get(getString(R.string.fs_user_display_name));
-                            Uri iconURI = Uri.parse((String) doc.getData().get(getString(R.string.fs_user_icon_url)));
-                            Timestamp startAt = (Timestamp) doc.getData().get(getString(R.string.fs_start_time));
-                            String status = (String) doc.getData().get(getString(R.string.fs_status));
-                            long pauseTieme = (long) doc.getData().get(getString(R.string.fs_pause_total_time));
+                            String userName = (String) doc.getData().get(activity.getResources().getString(R.string.fs_user_display_name));
+                            Uri iconURI = Uri.parse((String) doc.getData().get(activity.getResources().getString(R.string.fs_user_icon_url)));
+                            Timestamp startAt = (Timestamp) doc.getData().get(activity.getResources().getString(R.string.fs_start_time));
+                            String status = (String) doc.getData().get(activity.getResources().getString(R.string.fs_status));
+                            long pauseTieme = (long) doc.getData().get(activity.getResources().getString(R.string.fs_pause_total_time));
 
                             CurrentUser cu = null;
-                            if(status.equals(getString(R.string.state_study))){
+                            if(status.equals(activity.getResources().getString(R.string.state_study))){
                                 cu = new CurrentUser(docId, userName, iconURI, startAt, status, pauseTieme);
-                            }else if(status.equals(getString(R.string.state_pause))){
-                                Timestamp pauseStartTieme = (Timestamp) doc.getData().get(getString(R.string.fs_pause_start_time));
-                                boolean sendable = (boolean) doc.getData().get(getString(R.string.fs_sendable));
-                                String token = (String) doc.getData().get(getString(R.string.fs_registered_token));
+                            }else if(status.equals(activity.getResources().getString(R.string.state_pause))){
+                                Timestamp pauseStartTieme = (Timestamp) doc.getData().get(activity.getResources().getString(R.string.fs_pause_start_time));
+                                boolean sendable = (boolean) doc.getData().get(activity.getResources().getString(R.string.fs_sendable));
+                                String token = (String) doc.getData().get(activity.getResources().getString(R.string.fs_registered_token));
                                 cu = new CurrentUser(docId, userName, iconURI, startAt, status, pauseTieme, pauseStartTieme, token, sendable);
                             }
                             mCurrentUsers.add(cu);
@@ -103,7 +106,7 @@ public class StudyRoomFragment extends Fragment {
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        updateUI();
+                        updateUI(mActivity);
                     }
                 });
     }
