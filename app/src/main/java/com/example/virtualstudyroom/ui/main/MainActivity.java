@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -45,6 +46,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.picasso.Picasso;
 
 import java.sql.Time;
@@ -105,12 +110,13 @@ public class MainActivity extends AppCompatActivity {
         if(savedInstanceState==null) {
             initFragment();
         }
+
     }
 
     public void setButtons(){
         displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
         mFireDb.collection(getString(R.string.study_user_collection))
-                .whereEqualTo(getString(R.string.user_id), mCurrentUser.getUid())
+                .whereEqualTo(getString(R.string.fs_user_id), mCurrentUser.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -332,23 +338,41 @@ public class MainActivity extends AppCompatActivity {
     public void onPauseButtonClick(View view){
         displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
 
-        Timestamp time = Timestamp.now();
-        Map<String, Object> user = new HashMap<>();
-        user.put(getString(R.string.fs_status), getString(R.string.state_pause));
-        user.put(getString(R.string.fs_pause_start_time), time);
-        DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
-        docRef.update(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
-                        displayButtonRoom(getResources().getInteger(R.integer.pause_state_val));
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("LLLL", "Error updating document", e);
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        Log.d("MMMMM", token);
+
+                        Timestamp time = Timestamp.now();
+                        Map<String, Object> user = new HashMap<>();
+                        user.put(getString(R.string.fs_status), getString(R.string.state_pause));
+                        user.put(getString(R.string.fs_pause_start_time), time);
+                        user.put(getString(R.string.fs_sendable), true);
+                        user.put(getString(R.string.fs_registered_token), token);
+                        DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
+                        docRef.update(user)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                        displayButtonRoom(getResources().getInteger(R.integer.pause_state_val));
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("LLLL", "Error updating document", e);
+                                    }
+                                });
                     }
                 });
     }

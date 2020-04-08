@@ -19,21 +19,31 @@ import android.widget.Toast;
 import com.example.virtualstudyroom.R;
 import com.example.virtualstudyroom.model.CurrentUser;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class StudyRoomFragment extends Fragment {
 
     private List<CurrentUser> mCurrentUsers = new ArrayList<CurrentUser>();
     private CurrentUserAdapter mAdapter;
     private RecyclerView mCurrentUserList;
+
+    public StudyRoomFragment(){}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +72,9 @@ public class StudyRoomFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         mCurrentUsers = new ArrayList<CurrentUser>();
+                        Log.d("+++++++++++++==","0");
                         for (QueryDocumentSnapshot doc: task.getResult()){
+                            String docId = doc.getId();
                             String userName = (String) doc.getData().get(getString(R.string.fs_user_display_name));
                             Uri iconURI = Uri.parse((String) doc.getData().get(getString(R.string.fs_user_icon_url)));
                             Timestamp startAt = (Timestamp) doc.getData().get(getString(R.string.fs_start_time));
@@ -71,10 +83,12 @@ public class StudyRoomFragment extends Fragment {
 
                             CurrentUser cu = null;
                             if(status.equals(getString(R.string.state_study))){
-                                cu = new CurrentUser(userName, iconURI, startAt, status, pauseTieme);
+                                cu = new CurrentUser(docId, userName, iconURI, startAt, status, pauseTieme);
                             }else if(status.equals(getString(R.string.state_pause))){
                                 Timestamp pauseStartTieme = (Timestamp) doc.getData().get(getString(R.string.fs_pause_start_time));
-                                cu = new CurrentUser(userName, iconURI, startAt, status, pauseTieme, pauseStartTieme);
+                                boolean sendable = (boolean) doc.getData().get(getString(R.string.fs_sendable));
+                                String token = (String) doc.getData().get(getString(R.string.fs_registered_token));
+                                cu = new CurrentUser(docId, userName, iconURI, startAt, status, pauseTieme, pauseStartTieme, token, sendable);
                             }
                             mCurrentUsers.add(cu);
                         }
@@ -89,7 +103,6 @@ public class StudyRoomFragment extends Fragment {
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        Log.d("COOOOO","change!!");
                         updateUI();
                     }
                 });

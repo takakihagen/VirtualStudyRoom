@@ -10,7 +10,7 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
-    <!--Stury Room -->
+    <!--Study Room -->
     <string name="start_button">START</string>
     <string name="stop_button">STOP</string>
     <string name="pause_button">PAUSE</string>
@@ -24,9 +24,15 @@
     <string name="fs_pause_start_time">pause_start_time</string>
     <string name="fs_status">status</string>
     <string name="fs_pause_total_time">pause_total_time</string>
+    <string name="fs_registered_token">token</string>
     <string name="state_study">study</string>
     <string name="state_pause">pause</string>
     <string name="state_stop">stop</string>
+
+    <string name="fs_send_to_registered_token">token</string>
+    <string name="fs_send_at">sendAt</string>
+    <string name="fs_send_from_name">name</string>
+    <string name="fs_sendable">sendable</string>
 
 
     <!-- For Firebase Authentication-->
@@ -38,7 +44,7 @@
 
     <!--Firestorage-->
     <string name="study_user_collection">StudyUsers</string>
-    <string name="user_id">user_id</string>
+    <string name="yell_collections">Yells</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">StudyHistory</string>

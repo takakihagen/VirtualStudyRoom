@@ -15,11 +15,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.virtualstudyroom.R;
 import com.example.virtualstudyroom.model.CurrentUser;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.CurrentUserViewHolder> {
 
@@ -80,20 +87,60 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
         if(cu.getStatus().equals(mContext.getString(R.string.state_study))){
             holder.mYellButton.setVisibility(View.INVISIBLE);
         }else if(cu.getStatus().equals(mContext.getString(R.string.state_pause))){
-            if(cu.getTotalPauseTime()>((long) mContext.getResources().getInteger(R.integer.yell_button_pause_time))) {
-                holder.mYellButton.setOnClickListener(new View.OnClickListener() {
-                                                          @Override
-                                                          public void onClick(View v) {
-                                                              Toast t = Toast.makeText(mContext, "clicked button", Toast.LENGTH_LONG);
-                                                              t.show();
-                                                          }
-                                                      }
-                );
+            if(cu.getTotalPauseTime()>((long) mContext.getResources().getInteger(R.integer.yell_button_pause_time)) && cu.getSendable()) {
+                yellButtonOnClickSet(cu, holder);
                 holder.mYellButton.setVisibility(View.VISIBLE);
             }else {
                 holder.mYellButton.setVisibility(View.INVISIBLE);
             }
         }
+    }
+
+    private void yellButtonOnClickSet(final CurrentUser cu, CurrentUserViewHolder holder){
+        holder.mYellButton.setOnClickListener(new View.OnClickListener() {
+                                                  @Override
+                                                  public void onClick(View v) {
+                                                      Map<String, Object> yell = new HashMap<>();
+                                                      yell.put(((MainActivity) mContext).getString(R.string.fs_send_from_name), FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                                                      yell.put(((MainActivity) mContext).getString(R.string.fs_send_to_registered_token), cu.getRegToken());
+                                                      yell.put(((MainActivity) mContext).getString(R.string.fs_send_at), Timestamp.now());
+                                                      yell.put("title", "test1");
+                                                      yell.put("content", "yo");
+
+                                                      ((MainActivity) mContext).mFireDb.collection(((MainActivity) mContext).getResources().getString(R.string.yell_collections))
+                                                              .add(yell)
+                                                              .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                  @Override
+                                                                  public void onSuccess(DocumentReference documentReference) {
+                                                                      Log.d("OOOO", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                  }
+                                                              })
+                                                              .addOnFailureListener(new OnFailureListener() {
+                                                                  @Override
+                                                                  public void onFailure(@NonNull Exception e) {
+                                                                      Log.w("OOOO", "Error adding document", e);
+                                                                  }
+                                                              });
+
+                                                      Map<String, Object> user = new HashMap<>();
+                                                      user.put(mContext.getResources().getString(R.string.fs_sendable), false);
+                                                      DocumentReference docRef = ((MainActivity) mContext).mFireDb.collection(((MainActivity) mContext).getResources().getString(R.string.study_user_collection)).document(cu.getDocId());
+                                                      docRef.update(user)
+                                                              .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                  @Override
+                                                                  public void onSuccess(Void aVoid) {
+                                                                      Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                                                  }
+                                                              })
+                                                              .addOnFailureListener(new OnFailureListener() {
+                                                                  @Override
+                                                                  public void onFailure(@NonNull Exception e) {
+                                                                      Log.w("LLLL", "Error updating document", e);
+                                                                  }
+                                                              });
+                                                  }
+                                              }
+        );
     }
 
     public class CurrentUserViewHolder extends RecyclerView.ViewHolder{

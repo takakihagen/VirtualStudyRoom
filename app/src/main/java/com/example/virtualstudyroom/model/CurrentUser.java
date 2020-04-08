@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.google.firebase.Timestamp;
 
 public class CurrentUser {
+    private String docId;
     private String userName;
     private Uri iconURI;
     private Timestamp startAt;
@@ -12,12 +13,16 @@ public class CurrentUser {
     private long pauseTieme;
     private Timestamp pauseStartTime;
 
+    private boolean sendabale;
+    private String regToken;
+
     private long TotalPauseTimeInMin;
     private long TotalStudyTimeInMin;
 
-    public CurrentUser(String userName, Uri iconURI, Timestamp startAt,
+    public CurrentUser(String dockId, String userName, Uri iconURI, Timestamp startAt,
                        String status, long pauseTieme){
         //if status is "study"
+        this.docId = dockId;
         this.userName = userName;
         this.iconURI = iconURI;
         this.startAt = startAt;
@@ -28,15 +33,20 @@ public class CurrentUser {
         TotalPauseTimeInMin = 0;
     }
 
-    public CurrentUser(String userName, Uri iconURI, Timestamp startAt,
-                       String status, long pauseTieme, Timestamp pauseStartTime){
+    public CurrentUser(String docId, String userName, Uri iconURI, Timestamp startAt,
+                       String status, long pauseTieme, Timestamp pauseStartTime,
+                       String regToken, boolean sendable){
         //if status is "pause"
+        this.docId = docId;
         this.userName = userName;
         this.iconURI = iconURI;
         this.startAt = startAt;
         this.status = status;
         this.pauseTieme = pauseTieme;
         this.pauseStartTime = pauseStartTime;
+
+        this.sendabale = sendable;
+        this.regToken = regToken;
 
         TotalStudyTimeInMin = 0;
         TotalPauseTimeInMin = Math.abs(Timestamp.now().getSeconds()-pauseStartTime.getSeconds())/60;
@@ -48,4 +58,8 @@ public class CurrentUser {
     public String getStatus(){return status;}
     public long getTotalStudyTime(){return TotalStudyTimeInMin;}
     public long getTotalPauseTime(){return TotalPauseTimeInMin;}
+
+    public String getDocId(){return docId;}
+    public boolean getSendable(){return sendabale;}
+    public String getRegToken(){return regToken;}
 }

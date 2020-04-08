@@ -5,5 +5,5 @@
     <integer name="stop_state_val">3</integer>
     <integer name="load_state_val">4</integer>
 
-    <integer name="yell_button_pause_time">5</integer>
+    <integer name="yell_button_pause_time">0</integer>
 </resources>
