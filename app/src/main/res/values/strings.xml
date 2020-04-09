@@ -16,6 +16,10 @@
     <string name="pause_button">PAUSE</string>
     <string name="min_text">min</string>
 
+    <!--Study History-->
+    <string name="this_week">This Week (Hour)</string>
+    <string name="last_week">Last Week (Hour)</string>
+
     <!--Firestore field name-->
     <string name="fs_user_id">user_id</string>
     <string name="fs_user_display_name">user_name</string>
