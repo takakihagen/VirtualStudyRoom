@@ -8,6 +8,9 @@
             android:id="@+id/nav_study_history"
             android:title="@string/nav_study_history" />
         <item
+            android:id="@+id/nav_yell_history"
+            android:title="@string/nav_yell_history"/>
+        <item
             android:id="@+id/nav_sign_out"
             android:title="@string/nav_sign_out" />
     </group>

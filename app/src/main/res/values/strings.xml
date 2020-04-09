@@ -4,6 +4,7 @@
     <!--Navigation Bar-->
     <string name="nav_study_room">Study Room</string>
     <string name="nav_study_history">History</string>
+    <string name="nav_yell_history">Yells</string>
     <string name="nav_sign_out">Sign Out</string>
     <string name="anonymous">Anonymous</string>
 

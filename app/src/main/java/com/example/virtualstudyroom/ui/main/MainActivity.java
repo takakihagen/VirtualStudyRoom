@@ -215,6 +215,10 @@ public class MainActivity extends AppCompatActivity {
                 fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new StudyHistoryFragment()).commit();
                 changeFrame = true;
                 break;
+            case R.id.nav_yell_history:
+                fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new YellHistoryFragment()).commit();
+                changeFrame = true;
+                break;
             case R.id.nav_sign_out:
                 LogOut();
                 break;
