@@ -7,6 +7,7 @@ import com.google.firebase.Timestamp;
 public class CurrentUser {
     private String docId;
     private String userName;
+    private String userId;
     private Uri iconURI;
     private Timestamp startAt;
     private String status;
@@ -19,11 +20,12 @@ public class CurrentUser {
     private long TotalPauseTimeInMin;
     private long TotalStudyTimeInMin;
 
-    public CurrentUser(String dockId, String userName, Uri iconURI, Timestamp startAt,
+    public CurrentUser(String dockId, String userName, String userId, Uri iconURI, Timestamp startAt,
                        String status, long pauseTieme){
         //if status is "study"
         this.docId = dockId;
         this.userName = userName;
+        this.userId = userId;
         this.iconURI = iconURI;
         this.startAt = startAt;
         this.status = status;
@@ -33,12 +35,13 @@ public class CurrentUser {
         TotalPauseTimeInMin = 0;
     }
 
-    public CurrentUser(String docId, String userName, Uri iconURI, Timestamp startAt,
+    public CurrentUser(String docId, String userName, String userId, Uri iconURI, Timestamp startAt,
                        String status, long pauseTieme, Timestamp pauseStartTime,
                        String regToken, boolean sendable){
         //if status is "pause"
         this.docId = docId;
         this.userName = userName;
+        this.userId = userId;
         this.iconURI = iconURI;
         this.startAt = startAt;
         this.status = status;
@@ -62,4 +65,5 @@ public class CurrentUser {
     public String getDocId(){return docId;}
     public boolean getSendable(){return sendabale;}
     public String getRegToken(){return regToken;}
+    public String getUserId(){return userId;}
 }

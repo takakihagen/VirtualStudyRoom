@@ -12,8 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.virtualstudyroom.R;
 import com.example.virtualstudyroom.model.Yell;
+import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class YellAdapter extends RecyclerView.Adapter<YellAdapter.YellViewHolder> {
 
@@ -42,6 +47,12 @@ public class YellAdapter extends RecyclerView.Adapter<YellAdapter.YellViewHolder
         if(mYells!=null){
             Yell yell = mYells.get(position);
             holder.mName.setText(yell.getUserName());
+            Picasso.get()
+                    .load(yell.getIconUrl())
+                    .into(holder.mIConImageView);
+
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm yyyy/MM/dd");
+            holder.mSendAtTIme.setText(dateFormat.format(yell.getSentAt().toDate()));
         }
     }
 
@@ -51,10 +62,14 @@ public class YellAdapter extends RecyclerView.Adapter<YellAdapter.YellViewHolder
     }
 
     public class YellViewHolder extends RecyclerView.ViewHolder{
+        CircleImageView mIConImageView;
         TextView mName;
+        TextView mSendAtTIme;
         public YellViewHolder(@NonNull View itemView) {
             super(itemView);
+            mIConImageView = (CircleImageView) itemView.findViewById(R.id.sender_icon);
             mName = (TextView) itemView.findViewById(R.id.sent_from_user_name);
+            mSendAtTIme = (TextView) itemView.findViewById(R.id.tv_time_stamp);
         }
     }
 }

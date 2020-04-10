@@ -79,6 +79,7 @@ public class StudyRoomFragment extends Fragment {
                         for (QueryDocumentSnapshot doc: task.getResult()){
                             String docId = doc.getId();
                             String userName = (String) doc.getData().get(activity.getResources().getString(R.string.fs_user_display_name));
+                            String userId = (String) doc.getData().get(activity.getResources().getString(R.string.fs_user_id));
                             Uri iconURI = Uri.parse((String) doc.getData().get(activity.getResources().getString(R.string.fs_user_icon_url)));
                             Timestamp startAt = (Timestamp) doc.getData().get(activity.getResources().getString(R.string.fs_start_time));
                             String status = (String) doc.getData().get(activity.getResources().getString(R.string.fs_status));
@@ -86,12 +87,12 @@ public class StudyRoomFragment extends Fragment {
 
                             CurrentUser cu = null;
                             if(status.equals(activity.getResources().getString(R.string.state_study))){
-                                cu = new CurrentUser(docId, userName, iconURI, startAt, status, pauseTieme);
+                                cu = new CurrentUser(docId, userName, userId, iconURI, startAt, status, pauseTieme);
                             }else if(status.equals(activity.getResources().getString(R.string.state_pause))){
                                 Timestamp pauseStartTieme = (Timestamp) doc.getData().get(activity.getResources().getString(R.string.fs_pause_start_time));
                                 boolean sendable = (boolean) doc.getData().get(activity.getResources().getString(R.string.fs_sendable));
                                 String token = (String) doc.getData().get(activity.getResources().getString(R.string.fs_registered_token));
-                                cu = new CurrentUser(docId, userName, iconURI, startAt, status, pauseTieme, pauseStartTieme, token, sendable);
+                                cu = new CurrentUser(docId, userName, userId, iconURI, startAt, status, pauseTieme, pauseStartTieme, token, sendable);
                             }
                             mCurrentUsers.add(cu);
                         }

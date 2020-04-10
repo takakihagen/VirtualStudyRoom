@@ -40,6 +40,9 @@
     <string name="fs_send_to_registered_token">token</string>
     <string name="fs_send_at">sendAt</string>
     <string name="fs_send_from_name">name</string>
+    <string name="fs_send_from_icon_url">iconUrl</string>
+    <string name="fs_send_to_uid">toUserId</string>
+
     <string name="fs_sendable">sendable</string>
 
 

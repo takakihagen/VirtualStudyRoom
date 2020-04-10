@@ -64,10 +64,11 @@ public class YellHistoryFragment extends Fragment {
                         mYells = new ArrayList<Yell>();
                         for (QueryDocumentSnapshot doc: task.getResult()){
                             String userName = (String) doc.getData().get(activity.getResources().getString(R.string.fs_send_from_name));
-                            //Uri iconURI = Uri.parse((String) doc.getData().get(activity.getResources().getString(R.string.fs_user_icon_url)));
+                            String userId = (String) doc.getData().get(activity.getResources().getString(R.string.fs_send_to_uid));
+                            Uri iconURI = Uri.parse((String) doc.getData().get(activity.getResources().getString(R.string.fs_send_from_icon_url)));
                             Timestamp startAt = (Timestamp) doc.getData().get(activity.getResources().getString(R.string.fs_send_at));
 
-                            Yell yell = new Yell(userName, null, startAt);
+                            Yell yell = new Yell(userName, userId, iconURI, startAt);
                             mYells.add(yell);
                         }
                         mAdapter.setYells(mYells);

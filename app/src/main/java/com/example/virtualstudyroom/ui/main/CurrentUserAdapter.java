@@ -104,8 +104,8 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
                                                       yell.put(((MainActivity) mContext).getString(R.string.fs_send_from_name), FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
                                                       yell.put(((MainActivity) mContext).getString(R.string.fs_send_to_registered_token), cu.getRegToken());
                                                       yell.put(((MainActivity) mContext).getString(R.string.fs_send_at), Timestamp.now());
-                                                      yell.put("title", "test1");
-                                                      yell.put("content", "yo");
+                                                      yell.put(((MainActivity) mContext).getString(R.string.fs_send_to_uid), cu.getUserId());
+                                                      yell.put(((MainActivity) mContext).getString(R.string.fs_send_from_icon_url), FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString());
 
                                                       ((MainActivity) mContext).mFireDb.collection(((MainActivity) mContext).getResources().getString(R.string.yell_collections))
                                                               .add(yell)
