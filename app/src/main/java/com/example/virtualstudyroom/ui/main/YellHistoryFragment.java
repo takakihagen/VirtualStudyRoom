@@ -18,6 +18,7 @@ import com.example.virtualstudyroom.model.Yell;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -25,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class YellHistoryFragment extends Fragment {
@@ -63,14 +65,19 @@ public class YellHistoryFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         mYells = new ArrayList<Yell>();
                         for (QueryDocumentSnapshot doc: task.getResult()){
-                            String userName = (String) doc.getData().get(activity.getResources().getString(R.string.fs_send_from_name));
                             String userId = (String) doc.getData().get(activity.getResources().getString(R.string.fs_send_to_uid));
-                            Uri iconURI = Uri.parse((String) doc.getData().get(activity.getResources().getString(R.string.fs_send_from_icon_url)));
-                            Timestamp startAt = (Timestamp) doc.getData().get(activity.getResources().getString(R.string.fs_send_at));
+                            if(userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                String userName = (String) doc.getData().get(activity.getResources().getString(R.string.fs_send_from_name));
+                                Uri iconURI = Uri.parse((String) doc.getData().get(activity.getResources().getString(R.string.fs_send_from_icon_url)));
+                                Timestamp startAt = (Timestamp) doc.getData().get(activity.getResources().getString(R.string.fs_send_at));
 
-                            Yell yell = new Yell(userName, userId, iconURI, startAt);
-                            mYells.add(yell);
+                                Yell yell = new Yell(userName, userId, iconURI, startAt);
+                                mYells.add(yell);
+                            }
                         }
+
+                        Collections.sort(mYells);
+                        Collections.reverse(mYells);
                         mAdapter.setYells(mYells);
                         mAdapter.notifyDataSetChanged();
                     }

@@ -4,7 +4,7 @@ import android.net.Uri;
 
 import com.google.firebase.Timestamp;
 
-public class Yell {
+public class Yell implements Comparable<Yell>{
     private String userName;
     private String toUserId;
     private Uri iconUrl;
@@ -21,4 +21,9 @@ public class Yell {
     public String getToUserId(){ return toUserId;}
     public Uri getIconUrl(){ return iconUrl; }
     public Timestamp getSentAt(){ return sentAt; }
+
+    @Override
+    public int compareTo(Yell o) {
+        return getSentAt().compareTo(o.getSentAt());
+    }
 }
