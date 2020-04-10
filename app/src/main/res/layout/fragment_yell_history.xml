@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.YellHistoryFragment">
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_yells"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TEST THIS PAGE"/>
+        android:layout_height="match_parent"/>
 </LinearLayout>

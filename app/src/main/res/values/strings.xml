@@ -21,6 +21,9 @@
     <string name="this_week">This Week (Hour)</string>
     <string name="last_week">Last Week (Hour)</string>
 
+    <!--Yell History-->
+    <string name="message_template">You got an Yell from</string>
+
     <!--Firestore field name-->
     <string name="fs_user_id">user_id</string>
     <string name="fs_user_display_name">user_name</string>
