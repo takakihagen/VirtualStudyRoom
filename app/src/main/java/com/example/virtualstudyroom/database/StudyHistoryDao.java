@@ -17,6 +17,9 @@ public interface StudyHistoryDao {
     @Query("SELECT * FROM StudyHistory ORDER BY start_time")
     LiveData<List<StudyHistory>> fetchAllHistory();
 
+    @Query("SELECT * FROM StudyHistory ORDER BY start_time")
+    List<StudyHistory> fetchAllHistoryNoLive();
+
     @Update
     void updateHistory(StudyHistory note);
 

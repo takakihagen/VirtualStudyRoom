@@ -13,6 +13,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -27,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.virtualstudyroom.R;
+import com.example.virtualstudyroom.TimeDisplayWidget;
 import com.example.virtualstudyroom.database.StudyHistory;
 import com.example.virtualstudyroom.database.StudyHistoryDatabase;
 import com.example.virtualstudyroom.model.CurrentUser;
@@ -291,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
         displayButtonRoom(getResources().getInteger(R.integer.load_state_val));
 
         final DocumentReference docRef = mFireDb.collection(getString(R.string.study_user_collection)).document(mDocumentId);
-
+        final Context context = this;
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
