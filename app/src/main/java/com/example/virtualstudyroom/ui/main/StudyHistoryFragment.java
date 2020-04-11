@@ -112,7 +112,7 @@ public class StudyHistoryFragment extends Fragment {
         barChart.setTouchEnabled(false);
 
         BarDataSet bardataset = new BarDataSet(entries, "");
-        
+
         bardataset.setDrawIcons(false);
         //bardataset.setDrawValues(false);//value on each chart
         BarData barData = new BarData(bardataset);

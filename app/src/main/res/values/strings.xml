@@ -60,6 +60,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">StudyHistory</string>
     <string name="hello_blank_fragment">StudyRoom</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
 
 </resources>
