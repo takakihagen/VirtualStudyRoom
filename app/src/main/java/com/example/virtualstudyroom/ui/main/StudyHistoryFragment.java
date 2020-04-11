@@ -99,15 +99,7 @@ public class StudyHistoryFragment extends Fragment {
     private void setWeekChart(BarChart barChart, ArrayList<BarEntry> entries){
 
         final String[] week = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-        final int[] colors = new int[]{
-            ContextCompat.getColor(getContext(), android.R.color.holo_blue_bright),
-            ContextCompat.getColor(getContext(), android.R.color.holo_green_light),
-            ContextCompat.getColor(getContext(), android.R.color.holo_red_light),
-            ContextCompat.getColor(getContext(), android.R.color.holo_orange_light),
-            ContextCompat.getColor(getContext(), android.R.color.holo_purple),
-            ContextCompat.getColor(getContext(), android.R.color.holo_orange_dark),
-            ContextCompat.getColor(getContext(), android.R.color.holo_blue_light),
-        };
+
         IndexAxisValueFormatter formatter = new IndexAxisValueFormatter(week);
         barChart.getXAxis().setGranularity(1f);
         barChart.getXAxis().setValueFormatter(formatter);
@@ -120,7 +112,7 @@ public class StudyHistoryFragment extends Fragment {
         barChart.setTouchEnabled(false);
 
         BarDataSet bardataset = new BarDataSet(entries, "");
-        bardataset.setColors(colors);
+        
         bardataset.setDrawIcons(false);
         //bardataset.setDrawValues(false);//value on each chart
         BarData barData = new BarData(bardataset);
