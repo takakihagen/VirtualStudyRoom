@@ -105,6 +105,8 @@ public class StudyHistoryFragment extends Fragment {
         barChart.getXAxis().setValueFormatter(formatter);
 
         barChart.getAxisLeft().setDrawGridLines(false);
+        barChart.getAxisRight().setEnabled(false);
+        barChart.getAxisLeft().setEnabled(false);
         barChart.getAxisRight().setDrawGridLines(false);
         barChart.getXAxis().setDrawGridLines(false);
         barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -115,6 +117,7 @@ public class StudyHistoryFragment extends Fragment {
 
         bardataset.setDrawIcons(false);
         //bardataset.setDrawValues(false);//value on each chart
+        bardataset.setValueTextSize(10f);
         BarData barData = new BarData(bardataset);
         barChart.setData(barData);
         barChart.setFitBars(true);
