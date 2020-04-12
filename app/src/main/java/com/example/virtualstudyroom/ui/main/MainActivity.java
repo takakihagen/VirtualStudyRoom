@@ -22,6 +22,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +49,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -165,6 +167,38 @@ public class MainActivity extends AppCompatActivity {
     private void initFragment(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new StudyRoomFragment()).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment f = getActiveFragment();
+        if(f!=null){
+            if(!"StudyRoomFragment".equals(f.getClass().getSimpleName()))
+                initFragment();
+            else
+                sendToBg();
+        }else {
+            sendToBg();
+        }
+    }
+
+    private void sendToBg(){
+        Intent i = new Intent();
+        i.setAction(Intent.ACTION_MAIN);
+        i.addCategory(Intent.CATEGORY_HOME);
+        this.startActivity(i);
+    }
+
+    private Fragment getActiveFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if(fragments != null){
+            for(Fragment fragment : fragments){
+                if(fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
     }
 
     private void initNavigationHeader(){
@@ -437,26 +471,34 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout stopStateLinerLayout = (LinearLayout) findViewById(R.id.stop_state_room);
         LinearLayout loadStateLinearLayout = (LinearLayout) findViewById(R.id.progress_bar_room);
 
-        if(getResources().getInteger(R.integer.study_state_val)==buttonRoomState) {
-            studyStateLinearLayout.setVisibility(View.VISIBLE);
-            pauseStateLinerLayout.setVisibility(View.GONE);
-            stopStateLinerLayout.setVisibility(View.GONE);
-            loadStateLinearLayout.setVisibility(View.GONE);
-        }else if(getResources().getInteger(R.integer.pause_state_val)==buttonRoomState){
-            studyStateLinearLayout.setVisibility(View.GONE);
-            pauseStateLinerLayout.setVisibility(View.VISIBLE);
-            stopStateLinerLayout.setVisibility(View.GONE);
-            loadStateLinearLayout.setVisibility(View.GONE);
-        }else if(getResources().getInteger(R.integer.stop_state_val)==buttonRoomState){
-            studyStateLinearLayout.setVisibility(View.GONE);
-            pauseStateLinerLayout.setVisibility(View.GONE);
-            stopStateLinerLayout.setVisibility(View.VISIBLE);
-            loadStateLinearLayout.setVisibility(View.GONE);
-        }else if(getResources().getInteger(R.integer.load_state_val)==buttonRoomState){
-            studyStateLinearLayout.setVisibility(View.GONE);
-            pauseStateLinerLayout.setVisibility(View.GONE);
-            stopStateLinerLayout.setVisibility(View.GONE);
-            loadStateLinearLayout.setVisibility(View.VISIBLE);
+        boolean checkStudyStateLinearLayout = (studyStateLinearLayout!=null);
+        boolean checkPauseStateLinearLayout = (pauseStateLinerLayout!=null);
+        boolean checkStopStateLinearLayout = (stopStateLinerLayout!=null);
+        boolean checkLoadStateLinearLayout = (loadStateLinearLayout!=null);
+
+        if(checkStudyStateLinearLayout && checkPauseStateLinearLayout
+                && checkStopStateLinearLayout && checkLoadStateLinearLayout){
+            if(getResources().getInteger(R.integer.study_state_val)==buttonRoomState) {
+                studyStateLinearLayout.setVisibility(View.VISIBLE);
+                pauseStateLinerLayout.setVisibility(View.GONE);
+                stopStateLinerLayout.setVisibility(View.GONE);
+                loadStateLinearLayout.setVisibility(View.GONE);
+            }else if(getResources().getInteger(R.integer.pause_state_val)==buttonRoomState){
+                studyStateLinearLayout.setVisibility(View.GONE);
+                pauseStateLinerLayout.setVisibility(View.VISIBLE);
+                stopStateLinerLayout.setVisibility(View.GONE);
+                loadStateLinearLayout.setVisibility(View.GONE);
+            }else if(getResources().getInteger(R.integer.stop_state_val)==buttonRoomState){
+                studyStateLinearLayout.setVisibility(View.GONE);
+                pauseStateLinerLayout.setVisibility(View.GONE);
+                stopStateLinerLayout.setVisibility(View.VISIBLE);
+                loadStateLinearLayout.setVisibility(View.GONE);
+            }else if(getResources().getInteger(R.integer.load_state_val)==buttonRoomState){
+                studyStateLinearLayout.setVisibility(View.GONE);
+                pauseStateLinerLayout.setVisibility(View.GONE);
+                stopStateLinerLayout.setVisibility(View.GONE);
+                loadStateLinearLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
