@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">VirtualStudyRoom</string>
 
+    <!--Log in-->
+    <string name="login_button">Start the App</string>
     <!--Navigation Bar-->
     <string name="nav_study_room">Study Room</string>
     <string name="nav_study_history">History</string>
