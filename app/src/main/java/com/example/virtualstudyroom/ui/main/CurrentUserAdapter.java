@@ -32,6 +32,7 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
 
     private List<CurrentUser> mCurrentUsers;
     private Context mContext;
+    private static final String TAG = CurrentUserAdapter.class.getSimpleName();
 
     public CurrentUserAdapter(Context context){
         mContext = context;
@@ -112,13 +113,13 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
                                                               .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                   @Override
                                                                   public void onSuccess(DocumentReference documentReference) {
-                                                                      Log.d("OOOO", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                      Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
                                                                   }
                                                               })
                                                               .addOnFailureListener(new OnFailureListener() {
                                                                   @Override
                                                                   public void onFailure(@NonNull Exception e) {
-                                                                      Log.w("OOOO", "Error adding document", e);
+                                                                      Log.w(TAG, "Error adding document", e);
                                                                   }
                                                               });
 
@@ -129,13 +130,13 @@ public class CurrentUserAdapter extends RecyclerView.Adapter<CurrentUserAdapter.
                                                               .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                   @Override
                                                                   public void onSuccess(Void aVoid) {
-                                                                      Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                                                      Log.d(TAG, "DocumentSnapshot successfully updated!");
                                                                   }
                                                               })
                                                               .addOnFailureListener(new OnFailureListener() {
                                                                   @Override
                                                                   public void onFailure(@NonNull Exception e) {
-                                                                      Log.w("LLLL", "Error updating document", e);
+                                                                      Log.w(TAG, "Error updating document", e);
                                                                   }
                                                               });
                                                   }

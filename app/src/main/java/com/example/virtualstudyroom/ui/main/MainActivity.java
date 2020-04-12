@@ -67,6 +67,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
     private Toolbar mToolBar;
     private NavigationView mNavigationView;
@@ -217,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
                 .signOut(this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
-                        Log.v("+++", "Log out listner!!");
                         goToLoginActivity();
                     }
                 });
@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Log.d("OOOO", "DocumentSnapshot added with ID: " + documentReference.getId());
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
                         setmDocumentId(documentReference.getId());
                         displayButtonRoom(getResources().getInteger(R.integer.study_state_val));
 
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("OOOO", "Error adding document", e);
+                        Log.w(TAG, "Error adding document", e);
                     }
                 });
     }
@@ -350,14 +350,14 @@ public class MainActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
                                         displayButtonRoom(getResources().getInteger(R.integer.stop_state_val));
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Log.w("LLLL", "Error updating document", e);
+                                        Log.w(TAG, "Error updating document", e);
                                     }
                                 });
 
@@ -371,9 +371,9 @@ public class MainActivity extends AppCompatActivity {
                         }.execute();
                     }
                     else
-                        Log.d("JJJJJJ", "get failed with ", task.getException());
+                        Log.d(TAG, "get failed with ", task.getException());
                 } else {
-                    Log.d("JJJJJJ", "get failed with ", task.getException());
+                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -393,9 +393,6 @@ public class MainActivity extends AppCompatActivity {
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
 
-                        // Log and toast
-                        Log.d("MMMMM", token);
-
                         Timestamp time = Timestamp.now();
                         Map<String, Object> user = new HashMap<>();
                         user.put(getString(R.string.fs_status), getString(R.string.state_pause));
@@ -407,14 +404,14 @@ public class MainActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
                                         displayButtonRoom(getResources().getInteger(R.integer.pause_state_val));
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Log.w("LLLL", "Error updating document", e);
+                                        Log.w(TAG, "Error updating document", e);
                                     }
                                 });
                     }
@@ -444,21 +441,21 @@ public class MainActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Log.d("LLLL", "DocumentSnapshot successfully updated!");
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
                                         displayButtonRoom(getResources().getInteger(R.integer.study_state_val));
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Log.w("LLLL", "Error updating document", e);
+                                        Log.w(TAG, "Error updating document", e);
                                     }
                                 });
                     }
                     else
-                        Log.d("JJJJJJ", "get failed with ", task.getException());
+                        Log.d(TAG, "get failed with ", task.getException());
                 } else {
-                    Log.d("JJJJJJ", "get failed with ", task.getException());
+                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
