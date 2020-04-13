@@ -15,15 +15,18 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/book"/>
+            android:src="@drawable/book"
+            android:contentDescription="@string/widget_book_content_desc"/>
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/plus"/>
+            android:src="@drawable/plus"
+            android:contentDescription="@string/widget_plus_content_desc"/>
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/clock"/>
+            android:src="@drawable/clock"
+            android:contentDescription="@string/widget_clock_content_desc"/>
     </LinearLayout>
     <TextView
         android:id="@+id/appwidget_text"

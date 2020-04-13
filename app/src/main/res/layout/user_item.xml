@@ -7,6 +7,7 @@
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:contentDescription="@string/user_content_desc"
         android:id="@+id/current_user_icon"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -22,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="TextView"
+        android:text="@string/anonymous"
         app:layout_constraintStart_toEndOf="@+id/current_user_icon"
         app:layout_constraintTop_toTopOf="@+id/current_user_icon" />
 
@@ -32,6 +33,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:contentDescription="@string/underbar_content_desc"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -42,7 +44,6 @@
         android:id="@+id/tv_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/current_user_icon"
         app:layout_constraintStart_toStartOf="@+id/current_user_name" />
 
@@ -51,7 +52,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/tv_status"
         app:layout_constraintStart_toEndOf="@+id/tv_status" />
 
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="Button"
+        android:text="@string/yell_button_text"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/current_user_icon"
         app:layout_constraintEnd_toEndOf="parent"

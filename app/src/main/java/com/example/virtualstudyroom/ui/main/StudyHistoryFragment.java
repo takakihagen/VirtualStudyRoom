@@ -33,13 +33,11 @@ public class StudyHistoryFragment extends Fragment {
     private BarChart mBarChartLastWeek;
     final private int thisWeekId = 0;
     final private int lastWeekId = 1;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_study_history, container, false);
-
         mBarChartThisWeek = (BarChart) view.findViewById(R.id.bar_chart_this_week);
         mBarChartLastWeek = (BarChart) view.findViewById(R.id.bar_chart_last_week);
         retrieveTask(thisWeekId);

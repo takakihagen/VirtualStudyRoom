@@ -18,6 +18,7 @@
     <string name="stop_button">STOP</string>
     <string name="pause_button">PAUSE</string>
     <string name="min_text">min</string>
+    <string name="yell_button_text">Yell</string>
 
     <!--Study History-->
     <string name="this_week">This Week (Hour)</string>
@@ -59,11 +60,17 @@
     <string name="study_user_collection">StudyUsers</string>
     <string name="yell_collections">Yells</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <!-- Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">StudyHistory</string>
     <string name="hello_blank_fragment">StudyRoom</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
 
-
+    <!--content description-->
+    <string name="login_content_desc">Shows the background image</string>
+    <string name="widget_book_content_desc">Shows an icon of a book</string>
+    <string name="widget_plus_content_desc">Shows an icon of a plus</string>
+    <string name="widget_clock_content_desc">Shows an icon of a clock</string>
+    <string name="underbar_content_desc">Shows an under bar</string>
+    <string name="user_content_desc">Shows an icon of the user</string>
 </resources>
